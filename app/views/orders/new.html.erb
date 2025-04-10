@@ -1,0 +1,23 @@
+<h1>Review Your Order</h1>
+
+<p><strong>Subscription:</strong> <%= @subscription.name %></p>
+<p><strong>Price:</strong> $<%= @subscription.price %> / <%= @subscription.interval %></p>
+
+<%= form_with model: @order, url: subscription_orders_path(@subscription.id), remote: true do |form| %>
+  <div class="field">
+    <%= form.label :headset_id, "Add Headset (Optional)" %>
+    <%= form.collection_select :headset_id, @headsets, :id, :name, prompt: "No headset" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :paid %>
+    <%= form.check_box :paid %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Place Order" %>
+  </div>
+<% end %>
+
+</br>
+<%= link_to "Back To Subscription", subscriptions_path %>

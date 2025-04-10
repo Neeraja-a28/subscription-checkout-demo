@@ -1,0 +1,16 @@
+<h1>Order Summary</h1>
+
+<p><strong>User:</strong> <%= @order.user.email %></p>
+<p><strong>Subscription:</strong> <%= @order.subscription.name %> ($<%= @order.subscription.price %>)</p>
+
+<% if @order.headset %>
+  <p><strong>Headset:</strong> <%= @order.headset.name %> ($<%= @order.headset.price %>)</p>
+<% else %>
+  <p><strong>Headset:</strong> Not included</p>
+<% end %>
+
+<p><strong>Total:</strong> $<%= @order.total_amount %></p>
+<p><strong>Paid:</strong> <%= @order.paid ? 'Yes' : 'No' %></p>
+
+</br>
+<%= link_to "Back to Subscription", subscriptions_path %>

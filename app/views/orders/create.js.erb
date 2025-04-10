@@ -1,0 +1,9 @@
+var stripe = Stripe(document.querySelector('meta[name="stripe-publishable-key"]').content);
+
+stripe.redirectToCheckout({
+  sessionId: '<%= @session.id %>'
+}).then(function (result) {
+  if (result.error) {
+    alert(result.error.message);
+  }
+});

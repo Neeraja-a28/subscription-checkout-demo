@@ -8,8 +8,13 @@ class OrdersController < ApplicationController
 	def create
   		@order = Order.new(order_params)
   		@order.subscription_id = params[:subscription_id]
+  		@order.headset_id = params[:headset_id] if params[:headset_id].present?
   		@order.user = current_user
   		@order.total_amount = calculate_total(@order)
+  		@order.paid = false
+
+  		@subscription = Subscription.find(@order.subscription_id)
+  		@headsets = Headset.all
 
   		line_items = [{
   			price_data: {
@@ -24,6 +29,7 @@ class OrdersController < ApplicationController
   		}]
 
   		if @order.headset.present?
+
   			line_items << [{
   				price_data: {
   					currency: 'usd',
@@ -46,16 +52,18 @@ class OrdersController < ApplicationController
 
   		@order.stripe_session_id = @session.id
 
-  		if @order.save
+  		if @order.save && @order.paid == true
   			puts "Order details: #{@order.inspect}"
   			puts "Stripe Checkout Session created: #{@session.id}"
 
-  			redirect_to subscriptions_path, notice: 'Order created successfully.'
+  			OrderConfirmationJob.perform_now(@order)
+
+			redirect_to subscriptions_path, notice: 'Order created successfully.'
   		else
+  			IncompleteCheckoutReminderJob.perform_now(@order)
   			render :new
   		end
 
-  		OrderConfirmationJob.perform_now(@order)
 	end
 
 	def show

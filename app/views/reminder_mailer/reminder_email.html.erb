@@ -1,0 +1,13 @@
+<h1>Hi <%= @user.email %>,</h1>
+
+<p>It looks like you started an order but didn't finish checking out.</p>
+
+<p>
+  Subscription: <%= @order.subscription.name %><br>
+  Headset: <%= @order.headset&.name || "None" %><br>
+  Total: $<%= @order.total_amount %>
+</p>
+
+<p>
+  Complete your checkout <a href="<%= root_url %>">here</a>!
+</p>

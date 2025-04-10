@@ -5,4 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :orders
+  belongs_to :users
+  has_one :subscription
+  has_many :headset
 end

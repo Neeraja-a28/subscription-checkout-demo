@@ -41,6 +41,8 @@ class OrdersController < ApplicationController
   			}
   		end
 
+  		# using Checkout Session we can pay for one-time purchases or subscription
+
   		@session = Stripe::Checkout::Session.create({
   			payment_method_types: ['card'],
   			line_items: line_items,

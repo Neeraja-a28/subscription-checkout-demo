@@ -22,8 +22,4 @@ Rails.application.routes.draw do
   
   resources :headsets, only: [:new, :create]
 
-  get '/success', to: 'orders#success', as: 'success_orders'
-  get '/cancel', to: 'orders#cancel', as: 'cancel_orders'
-  
-
 end

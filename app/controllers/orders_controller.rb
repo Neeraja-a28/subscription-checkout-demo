@@ -11,7 +11,6 @@ class OrdersController < ApplicationController
   		@order.headset_id = params[:headset_id] if params[:headset_id].present?
   		@order.user = current_user
   		@order.total_amount = calculate_total(@order)
-  		@order.paid = false
 
   		@subscription = Subscription.find(@order.subscription_id)
   		@headsets = Headset.all
@@ -30,7 +29,7 @@ class OrdersController < ApplicationController
 
   		if @order.headset.present?
 
-  			line_items << [{
+  			line_items << {
   				price_data: {
   					currency: 'usd',
   					product_data: {
@@ -39,7 +38,7 @@ class OrdersController < ApplicationController
   					unit_amount: (@order.headset.price * 100).to_i
   				},
   				quantity: 1
-  			}]
+  			}
   		end
 
   		@session = Stripe::Checkout::Session.create({
@@ -52,15 +51,19 @@ class OrdersController < ApplicationController
 
   		@order.stripe_session_id = @session.id
 
-  		if @order.save && @order.paid == true
+  		if @order.save 
   			puts "Order details: #{@order.inspect}"
   			puts "Stripe Checkout Session created: #{@session.id}"
 
-  			OrderConfirmationJob.perform_now(@order)
+  			if @order.paid?
+  				OrderConfirmationJob.perform_now(@order)
+  			else
+  				IncompleteCheckoutReminderJob.perform_later(@order)
+  			end
 
 			redirect_to subscriptions_path, notice: 'Order created successfully.'
-  		else
-  			IncompleteCheckoutReminderJob.perform_now(@order)
+		
+  		else 
   			render :new
   		end
 

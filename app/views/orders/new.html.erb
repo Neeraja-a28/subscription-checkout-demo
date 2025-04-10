@@ -1,23 +1,21 @@
 <h1>Review Your Order</h1>
 
-<p><strong>Subscription:</strong> <%= @subscription.name %></p>
-<p><strong>Price:</strong> $<%= @subscription.price %> / <%= @subscription.interval %></p>
+<p><strong>Selected Plan:</strong> <%= @subscription.name %> ($<%= @subscription.price %>) - <%= @subscription.interval %></p>
 
-<%= form_with model: @order, url: subscription_orders_path(@subscription.id), remote: true do |form| %>
+<%= form_with model: @order, url: subscription_orders_path(@subscription.id), local: true do |f| %>
+
+  <p>
+    <%= f.label :headset_id, "Add a Headset (optional)" %><br>
+    <%= f.collection_select :headset_id, @headsets, :id, :name, include_blank: true %>
+  </p>
+
   <div class="field">
-    <%= form.label :headset_id, "Add Headset (Optional)" %>
-    <%= form.collection_select :headset_id, @headsets, :id, :name, prompt: "No headset" %>
+    <%= f.label :paid %>
+    <%= f.check_box :paid %>
   </div>
-
-  <div class="field">
-    <%= form.label :paid %>
-    <%= form.check_box :paid %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit "Place Order" %>
-  </div>
+  
+  <%= f.submit "Continue to Payment", class: "btn btn-success" %>
 <% end %>
 
 </br>
-<%= link_to "Back To Subscription", subscriptions_path %>
+<%= link_to "Back ", subscriptions_path, class: "btn btn-secondary mt-2" %>

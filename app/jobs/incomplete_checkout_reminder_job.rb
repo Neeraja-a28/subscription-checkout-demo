@@ -2,8 +2,10 @@ class IncompleteCheckoutReminderJob < ApplicationJob
   queue_as :default
 
   def perform(order)
-    puts "perform incomplete checkout reminder confirmation"
-    order = Order.where(id: order.id, paid: false).last
+    order = Order.find(order.id)
+    puts "Sending reminder email for incomplete checkout: #{order.id}"
+    return if order.nil?
+
     ReminderMailer.reminder_email(order).deliver_now unless order.paid?
   end
 

@@ -58,7 +58,7 @@ class OrdersController < ApplicationController
   			if @order.paid?
   				OrderConfirmationJob.perform_now(@order)
   			else
-  				IncompleteCheckoutReminderJob.perform_later(@order)
+  				IncompleteCheckoutReminderJob.perform_now(@order)
   			end
 
 			redirect_to subscriptions_path, notice: 'Order created successfully.'
